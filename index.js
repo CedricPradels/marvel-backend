@@ -52,8 +52,19 @@ app.get("/characters", async (req, res) => {
   res.status(200).json(response.data.data.results);
 });
 
-app.get("/", (req, res) => {
-  res.json({ message: "Reçu !!!" });
+// COMICS
+// SEARCH BY NAME
+app.get("/comics", async (req, res) => {
+  const path = "/v1/public/comics";
+  const orderBy = "title";
+  const limit = "100";
+  const title = req.query.title;
+
+  const response = await axios.get(
+    `${marvelBaseEndpoint}${path}?ts=${timestamp}&apikey=${process.env.MARVEL_KEY_PUBLIC}&hash=${hash}&titleStartsWith=${title}&orderBy=${orderBy}&limit=${limit}`
+  );
+  console.log(response.data.data.results);
+  res.status(200).json(response.data.data.results);
 });
 
 app.all("*", (req, res) => {
