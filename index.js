@@ -7,6 +7,10 @@ const app = express();
 const formidableMiddleware = require("express-formidable");
 app.use(formidableMiddleware());
 
+// CORS
+const cors = require("cors");
+app.use(cors());
+
 // Axios
 const axios = require("axios");
 
@@ -19,17 +23,33 @@ const hash = md5(
 );
 
 // CHARACTERS
-// SEARCH
-app.get("/test", async (req, res) => {
-  const path = "/v1/public/characters";
-  const name = "Spider-Man";
-  const orderBy = "name";
+
+// SEARCH BY ID
+app.get("/characters/:id", async (req, res) => {
+  const id = req.params.id;
+  const path = `/v1/public/characters/${id}/comics`;
+  const orderBy = "title";
   const limit = "100";
 
   const response = await axios.get(
-    `${marvelBaseEndpoint}${path}?ts=${timestamp}&apikey=${process.env.MARVEL_KEY_PUBLIC}&hash=${hash}&name=${name}&orderBy=${orderBy}&limit=${limit}`
+    `${marvelBaseEndpoint}${path}?ts=${timestamp}&apikey=${process.env.MARVEL_KEY_PUBLIC}&hash=${hash}&orderBy=${orderBy}&limit=${limit}`
   );
-  res.status(200).json(response.data);
+  console.log(response.data.data.results);
+  res.status(200).json(response.data.data.results);
+});
+
+// SEARCH BY NAME
+app.get("/characters", async (req, res) => {
+  const path = "/v1/public/characters";
+  const orderBy = "name";
+  const limit = "100";
+  const name = req.query.name;
+
+  const response = await axios.get(
+    `${marvelBaseEndpoint}${path}?ts=${timestamp}&apikey=${process.env.MARVEL_KEY_PUBLIC}&hash=${hash}&nameStartsWith=${name}&orderBy=${orderBy}&limit=${limit}`
+  );
+  console.log(response.data.data.results);
+  res.status(200).json(response.data.data.results);
 });
 
 app.get("/", (req, res) => {
