@@ -44,12 +44,20 @@ app.get("/characters", async (req, res) => {
   const orderBy = "name";
   const limit = "100";
   const name = req.query.name;
+  const nameSearch = name ? `&nameStartsWith=${name}` : "";
+  const page = req.query.page;
 
   const response = await axios.get(
-    `${marvelBaseEndpoint}${path}?ts=${timestamp}&apikey=${process.env.MARVEL_KEY_PUBLIC}&hash=${hash}&nameStartsWith=${name}&orderBy=${orderBy}&limit=${limit}`
+    `${marvelBaseEndpoint}${path}?ts=${timestamp}&apikey=${
+      process.env.MARVEL_KEY_PUBLIC
+    }&hash=${hash}${nameSearch}&orderBy=${orderBy}&limit=${limit}&offset=${limit *
+      (page - 1)}`
   );
-  console.log(response.data.data.results);
-  res.status(200).json(response.data.data.results);
+
+  res.status(200).json({
+    total: response.data.data.total,
+    datas: response.data.data.results
+  });
 });
 
 // COMICS
