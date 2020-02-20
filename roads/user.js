@@ -31,7 +31,7 @@ router.post("/user/signin", async (req, res) => {
     });
 
     await newUser.save();
-    res.status(200).json(newUser.account.token);
+    res.status(200).json({ token: newUser.account.token });
   } catch (error) {
     res.status(400).json(error);
   }
