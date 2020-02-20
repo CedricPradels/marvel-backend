@@ -26,26 +26,44 @@ const hash = md5(
 
 // SEARCH BY ID
 app.get("/characters/:id", async (req, res) => {
+  console.log("Route sélectionnee");
   const id = req.params.id;
   const path = `/v1/public/characters/${id}/comics`;
   const orderBy = "title";
-  const limit = "100";
+  const limit = req.query.limit ? req.query.limit : "100";
+  const page = req.query.page ? req.query.page : "1";
+
+  console.log("id ", id);
+  console.log("path ", path);
+  console.log("limit ", limit);
+  console.log("page ", page);
 
   const response = await axios.get(
-    `${marvelBaseEndpoint}${path}?ts=${timestamp}&apikey=${process.env.MARVEL_KEY_PUBLIC}&hash=${hash}&orderBy=${orderBy}&limit=${limit}`
+    `${marvelBaseEndpoint}${path}?ts=${timestamp}&apikey=${
+      process.env.MARVEL_KEY_PUBLIC
+    }&hash=${hash}&orderBy=${orderBy}&limit=${limit}&offset=${limit *
+      (page - 1)}`
   );
-  console.log(response.data.data.results);
-  res.status(200).json(response.data.data.results);
+
+  console.log({
+    total: response.data.data.total,
+    datas: response.data.data.results
+  });
+
+  res.status(200).json({
+    total: response.data.data.total,
+    datas: response.data.data.results
+  });
 });
 
 // SEARCH BY NAME
 app.get("/characters", async (req, res) => {
   const path = "/v1/public/characters";
   const orderBy = "name";
-  const limit = "100";
+  const limit = req.query.limit ? req.query.limit : "100";
   const name = req.query.name;
   const nameSearch = name ? `&nameStartsWith=${name}` : "";
-  const page = req.query.page;
+  const page = req.query.page ? req.query.page : "1";
 
   const response = await axios.get(
     `${marvelBaseEndpoint}${path}?ts=${timestamp}&apikey=${
@@ -65,12 +83,16 @@ app.get("/characters", async (req, res) => {
 app.get("/comics", async (req, res) => {
   const path = "/v1/public/comics";
   const orderBy = "title";
-  const limit = "100";
+  const limit = req.query.limit ? req.query.limit : "100";
+  const page = req.query.page ? req.query.page : "1";
   const title = req.query.title;
   const titleSearch = title ? `&titleStartsWith=${title}` : "";
 
   const response = await axios.get(
-    `${marvelBaseEndpoint}${path}?ts=${timestamp}&apikey=${process.env.MARVEL_KEY_PUBLIC}&hash=${hash}${titleSearch}&orderBy=${orderBy}&limit=${limit}`
+    `${marvelBaseEndpoint}${path}?ts=${timestamp}&apikey=${
+      process.env.MARVEL_KEY_PUBLIC
+    }&hash=${hash}${titleSearch}&orderBy=${orderBy}&limit=${limit}&offset=${limit *
+      (page - 1)}`
   );
 
   res.status(200).json({
