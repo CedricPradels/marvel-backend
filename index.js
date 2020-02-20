@@ -37,17 +37,11 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 // SEARCH BY ID
 app.get("/characters/:id", async (req, res) => {
-  console.log("Route sélectionnee");
   const id = req.params.id;
   const path = `/v1/public/characters/${id}/comics`;
   const orderBy = "title";
   const limit = req.query.limit ? req.query.limit : "100";
   const page = req.query.page ? req.query.page : "1";
-
-  console.log("id ", id);
-  console.log("path ", path);
-  console.log("limit ", limit);
-  console.log("page ", page);
 
   const response = await axios.get(
     `${marvelBaseEndpoint}${path}?ts=${timestamp}&apikey=${
@@ -55,11 +49,6 @@ app.get("/characters/:id", async (req, res) => {
     }&hash=${hash}&orderBy=${orderBy}&limit=${limit}&offset=${limit *
       (page - 1)}`
   );
-
-  console.log({
-    total: response.data.data.total,
-    datas: response.data.data.results
-  });
 
   res.status(200).json({
     total: response.data.data.total,
