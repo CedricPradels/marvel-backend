@@ -14,6 +14,10 @@ app.use(cors());
 // Axios
 const axios = require("axios");
 
+// ROADS
+const user = require("./roads/user.js");
+app.use(user);
+
 // MARVEL API
 const md5 = require("md5");
 const marvelBaseEndpoint = "https://gateway.marvel.com/";
@@ -21,6 +25,13 @@ const timestamp = 1;
 const hash = md5(
   `${timestamp}${process.env.MARVEL_KEY_PRIVATE}${process.env.MARVEL_KEY_PUBLIC}`
 );
+
+// MONGOOSE
+const mongoose = require("mongoose");
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
 // CHARACTERS
 
