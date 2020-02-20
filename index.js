@@ -67,12 +67,16 @@ app.get("/comics", async (req, res) => {
   const orderBy = "title";
   const limit = "100";
   const title = req.query.title;
+  const titleSearch = title ? `&titleStartsWith=${title}` : "";
 
   const response = await axios.get(
-    `${marvelBaseEndpoint}${path}?ts=${timestamp}&apikey=${process.env.MARVEL_KEY_PUBLIC}&hash=${hash}&titleStartsWith=${title}&orderBy=${orderBy}&limit=${limit}`
+    `${marvelBaseEndpoint}${path}?ts=${timestamp}&apikey=${process.env.MARVEL_KEY_PUBLIC}&hash=${hash}${titleSearch}&orderBy=${orderBy}&limit=${limit}`
   );
-  console.log(response.data.data.results);
-  res.status(200).json(response.data.data.results);
+
+  res.status(200).json({
+    total: response.data.data.total,
+    datas: response.data.data.results
+  });
 });
 
 app.all("*", (req, res) => {
