@@ -6,16 +6,18 @@ const express = require("express");
 const app = express();
 const formidableMiddleware = require("express-formidable");
 app.use(formidableMiddleware());
+
+// CORS
+const cors = require("cors");
+app.use(cors());
+
+// ROUTES
 const user = require("./routes/user");
 app.use(user);
 const comics = require("./routes/comics");
 app.use(comics);
 const characters = require("./routes/characters");
 app.use(characters);
-
-// CORS
-const cors = require("cors");
-app.use(cors());
 
 // MONGOOSE
 const mongoose = require("mongoose");
