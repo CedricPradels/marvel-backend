@@ -1,6 +1,3 @@
-// DOTENV
-require("dotenv").config();
-
 // AXIOS
 const axios = require("axios");
 
@@ -14,7 +11,7 @@ const md5 = require("md5");
 
 // MONGOOSE
 const mongoose = require("mongoose");
-const User = require("../models/user");
+const User = require("../models/User");
 
 // MARVEL API
 const marvelBaseEndpoint = "https://gateway.marvel.com/";
