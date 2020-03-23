@@ -20,6 +20,9 @@ const hash = md5(
   `${timestamp}${process.env.MARVEL_KEY_PRIVATE}${process.env.MARVEL_KEY_PUBLIC}`
 );
 
+// MIDDLEWARES
+const isAuthenticated = require("../middlewares/isAuthenticated");
+
 router.post("/user/signin", async (req, res) => {
   try {
     const email = req.fields.email;
@@ -71,21 +74,7 @@ router.post("/user/login", async (req, res) => {
   }
 });
 
-const isTokenValid = async (req, res, next) => {
-  const token = req.headers.authorization.replace("Bearer ", "");
-  const userFound = await User.findOne({
-    "account.token": token
-  });
-
-  if (userFound) {
-    req.userFound = userFound;
-    return next();
-  } else {
-    return res.status(400).json({ error: "Wrong token" });
-  }
-};
-
-router.post("/user/addfavorite", isTokenValid, async (req, res) => {
+router.post("/user/addfavorite", isAuthenticated, async (req, res) => {
   try {
     const type = req.fields.type;
     const id = req.fields.id;
@@ -100,7 +89,7 @@ router.post("/user/addfavorite", isTokenValid, async (req, res) => {
   }
 });
 
-router.get("/user/favorites", isTokenValid, async (req, res) => {
+router.get("/user/favorites", isAuthenticated, async (req, res) => {
   try {
     const tabFavoriteCharacters = req.userFound.favorites.characters;
     const tabFavoriteComics = req.userFound.favorites.comics;
